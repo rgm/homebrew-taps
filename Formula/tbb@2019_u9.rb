@@ -3,11 +3,14 @@ class TbbAT2019U9 < Formula
   homepage "https://www.threadingbuildingblocks.org/"
   url "https://github.com/intel/tbb/archive/2019_U9.tar.gz"
   version "2019_U9"
-  sha256 "15652f5328cf00c576f065e5cd3eaf3317422fe82afb67a9bcec0dc065bd2abe"
+  # sha256 "15652f5328cf00c576f065e5cd3eaf3317422fe82afb67a9bcec0dc065bd2abe"
+  sha256 "3f5ea81b9caa195f1967a599036b473b2e7c347117330cda99b79cfcf5b77c84"
 
   depends_on "cmake" => :build
   depends_on "swig" => :build
   depends_on "python"
+
+  patch :DATA
 
   def install
     compiler = (ENV.compiler == :clang) ? "clang" : "gcc"
@@ -48,3 +51,19 @@ class TbbAT2019U9 < Formula
     system "./test"
   end
 end
+
+# See https://github.com/oneapi-src/oneTBB/issues/186
+__END__
+diff --git a/src/tbb/tools_api/ittnotify_config.h b/src/tbb/tools_api/ittnotify_config.h
+index 84af62d..03ac5d1 100644
+--- a/src/tbb/tools_api/ittnotify_config.h
++++ b/src/tbb/tools_api/ittnotify_config.h
+@@ -331,7 +331,7 @@ ITT_INLINE long
+ __itt_interlocked_increment(volatile long* ptr) ITT_INLINE_ATTRIBUTE;
+ ITT_INLINE long __itt_interlocked_increment(volatile long* ptr)
+ {
+-    return __TBB_machine_fetchadd4(ptr, 1) + 1L;
++    return __atomic_fetch_add(ptr, 1L, __ATOMIC_SEQ_CST) + 1L;
+ }
+ #endif /* ITT_SIMPLE_INIT */
+ #endif /* ITT_PLATFORM==ITT_PLATFORM_WIN */
