@@ -16,7 +16,7 @@ class OpencascadeAT740 < Formula
   depends_on "rapidjson" => :build
   depends_on "freeimage"
   depends_on "freetype"
-  depends_on "tbb"
+  depends_on "rgm/taps/tbb@2019_U9"
 
   def install
     system "cmake", ".",
